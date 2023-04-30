@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<style>
+		html, body {
+		  margin: 0px;
+		  position: relative;
+		}
+		.delete_counter {
+		 	position: absolute;
+		 	top: 10px;
+		 	right: 10px;
+		 	background-color: black;
+		 	color: white;
+		 	border-radius: 4px;
+		 	border: 2px solid darkslategray;
+		 	padding: 4px 10px;
+		 }
+		 .visible {
+			opacity: 1;
+		 	transition: opacity 1s;
+		 }
+		 .invisible {
+		 	opacity: 0;
+		 	transition: opacity 1s;
+		 }
+	</style>
+</head>
+<body>
+<div class="root">
+	<canvas id="game_board"></canvas>
+</div>
+<script type="text/javascript" src="./dist/main.js"></script>
+</body>
+</html>
