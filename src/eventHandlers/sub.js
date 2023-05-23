@@ -1,5 +1,6 @@
-import {updateHypeTrain} from '../helpers/getHypeTrainEvents.js';
+import {updateHypeTrain} from '../helpers/updateHypeTrain.js';
 
 export const handleSubscriptionEvent = (event, sessionData) => {
-  updateHypeTrain(sessionData)
+  sessionData.events.push({...event, date: Date.now()});
+  updateHypeTrain(sessionData);
 }

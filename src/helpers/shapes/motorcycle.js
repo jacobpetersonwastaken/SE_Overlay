@@ -2,7 +2,7 @@ import {clearBoard} from '../utils.js';
 import {drawWheel} from './wheel.js';
 
 const canvas = document.createElement('canvas');
-const context = canvas.getContext('2d');
+const context = canvas?.getContext('2d');
 const ctx = context;
 
 const drawMotorcycleWheels = (context, gameState, options) => {

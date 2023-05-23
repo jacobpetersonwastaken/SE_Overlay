@@ -4,7 +4,7 @@ import {clearBoard} from '../utils.js';
 const canvas = document.createElement('canvas');
 canvas.height = '160'
 canvas.width = '170'
-const context = canvas.getContext('2d');
+const context = canvas?.getContext('2d');
 const ctx = context;
 
 const drawDogHead = (context, x, y) => {

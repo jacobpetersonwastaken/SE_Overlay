@@ -3,7 +3,7 @@ import {drawDogOnCart} from './shapes/dogOnCart.js';
 import {clearBoard, getDefaultGameState} from './utils.js';
 
 const canvas = document.getElementById('game_board');
-const context = canvas.getContext('2d');
+const context = canvas?.getContext('2d');
 
 const updateGame = (sessionData, gameState) => {
   clearBoard(context);
@@ -14,10 +14,13 @@ const updateGame = (sessionData, gameState) => {
   });
 
   Object.entries(sessionData.hypeTrain.users).forEach(([userId, data], i) => {
+    const x = window.innerWidth - gameState.progress + 148 + (i * 100);
+    const y = window.innerHeight - 113;
+
     drawDogOnCart(context, gameState, {
       ...data,
-      x: window.innerWidth - gameState.progress + 148 + (i * 100),
-      y: window.innerHeight - 113,
+      x,
+      y,
     })
   })
 }

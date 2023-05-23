@@ -1,5 +1,4 @@
 import {drawWheel} from './wheel.js';
-import {createHiDPICanvas} from '../utils.js';
 
 const drawCartBody = (context, gameState, options) => {
   const {x, y, text, color} = options;
@@ -19,13 +18,14 @@ const drawCartBody = (context, gameState, options) => {
   context.fill();
 
   context.fillStyle = options.textColor || 'white';
+  context.font = 'bold 12px Karla';
 
-  text.forEach((txt, i) => {
+  text.slice(0,3).forEach((txt, i, arr) => {
   	const metrics = context.measureText(txt);
   	const textWidth = metrics.width;
   	const extraSpace = width - textWidth - 5;
 
-  	context.fillText(txt, x + opp + opp + extraSpace / 2, y + (height / 2) + (i * 12));
+  	context.fillText(txt, x + opp + opp + extraSpace / 2, y + 16 + (i * 14) + (arr.length < 3 ? 14 : 0));
   });
 }
 

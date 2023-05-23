@@ -4,33 +4,113 @@
 	<meta charset="utf-8">
 	<title></title>
 	<style>
-		html, body {
-		  margin: 0px;
-		  position: relative;
-		}
-		.delete_counter {
-		 	position: absolute;
-		 	top: 10px;
-		 	right: 10px;
-		 	background-color: black;
-		 	color: white;
-		 	border-radius: 4px;
-		 	border: 2px solid darkslategray;
-		 	padding: 4px 10px;
-		 }
-		 .visible {
-			opacity: 1;
-		 	transition: opacity 1s;
-		 }
-		 .invisible {
-		 	opacity: 0;
-		 	transition: opacity 1s;
-		 }
+html, body {
+	margin: 0px;
+	position: relative;
+}
+
+.visible {
+	opacity: 1;
+	transition: opacity 1s;
+}
+.invisible {
+	opacity: 1;
+	transition: opacity 1s;
+}
+
+.flex_container {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+.delete_counter {
+ 	background-color: black;
+ 	color: white;
+ 	border-radius: 4px;
+ 	border: 2px solid darkslategray;
+ 	padding: 8px 16px;
+ 	font-family: 'Karla';
+	font-size: 42px;
+	width: fit-content;
+	white-space: nowrap;
+	position: absolute;
+	display: block;
+	right: 10px;
+}
+
+#delete_counter_container {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+}
+
+#timer_container {
+	position: absolute;
+	opacity: 0;
+	transition: opacity 1s, top 1s ease;
+	right: 10px;
+	top: 10px;
+	width: min-content;
+	text-align: center;
+	background-color: white;
+	padding: 0px 38px;
+	border-radius: 4px;
+	height: 670px;
+}
+
+#timer_container h1 {
+	font-size: 64px;
+	white-space: nowrap;
+}
+
+#timer_container h2 {
+	font-size: 42px;
+}
+
+#users_in_pool {
+	white-space: nowrap;
+}
+
+#running_lottery, #lottery_results {
+	transition: opacity 1s;
+}
+#lottery_results {
+	transform: translateY(-330px);
+	float: left;
+	padding-left: 10px;
+}
+#lottery_winners_container li {
+	font-size: 40px;
+}
+
+
 	</style>
 </head>
 <body>
-<div class="root">
+<div id="root">
 	<canvas id="game_board"></canvas>
+	<div id="delete_counter_container"></div>
+	<div id="timer_container">
+		<h1>Chat Lottery</h1>
+		<div id="running_lottery">
+			<canvas id="timer" height="200" width="200"></canvas>
+			<h2 id="users_in_pool">Users in pool: <span id="lottery_players_count">0</span></h2>
+			<h2>Type !play or !join to be included in the lottery!</h2>
+		</div>
+		<div id="lottery_results">
+			<h2>Winners:</h2>
+			<ul id="lottery_winners_container">
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+			</ul>
+		</div>
+	</div>
+	<audio id="audio">
+	    <source id="audioSource" src=""></source>
+	</audio>
 </div>
 <script type="text/javascript" src="./dist/main.js"></script>
 </body>
