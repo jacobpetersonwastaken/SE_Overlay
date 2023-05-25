@@ -19,12 +19,19 @@ import {
 } from '../helpers/deleteCounters.js';
 import {runLottery} from '../helpers/lottery.js';
 import {updateHypeTrain} from '../helpers/updateHypeTrain.js';
-
+import {
+  blacklistWords
+} from '../helpers/blackListWords.js'
+import {
+  gptGeneration
+} from '../helpers/gptGenerate.js'
 const lotteryCount = document.getElementById('lottery_players_count');
-
+const filter_word = 'beep'
+const username = document.getElementById('tts_username');
+const user_message = document.getElementById('tts_message');
 export const handleMessageEvent = async (event, sessionData) => {
-  const {userId, msgId, text, tags} = event.data;
-
+  const {userId, msgId, text, tags, displayName} = event.data;
+  
   if(!sessionData.users[userId]) {
     const users = await getUsers(sessionData, [userId], []);
     if(users?.length) {
@@ -37,9 +44,7 @@ export const handleMessageEvent = async (event, sessionData) => {
   if(counter) {
     counter.messageIds[msgId] = true;
   }
-
   const lowerMessage = text.trim().toLowerCase();
-
   if(
     ENABLED_FEATURES.tts &&
     sessionData.tts.isEnabled && 
@@ -47,7 +52,22 @@ export const handleMessageEvent = async (event, sessionData) => {
     tags['custom-reward-id'] && 
     sessionData.tts.eventIds.includes(tags['custom-reward-id'])
   ) {
-    speak(text);
+    let index = sessionData.tts.eventIds.indexOf(event.data.tags["custom-reward-id"]);
+    if (index !== -1) {
+      const textStyle = sessionData.tts.eventTitles[index].trim().toLowerCase();
+      username.innerHTML = displayName;
+      if (textStyle.includes('normal')) { 
+        user_message.innerHTML = cleanText(text.slice(0, 100));
+        speak(cleanText(text.slice(0, 100)));
+        return;
+      }
+      gptGeneration(textStyle,text)
+      .then(result => {
+        user_message.innerHTML = result;
+        speak(result);
+    })
+      .catch(error => console.error(error)); 
+  } 
   } 
   
   if(
@@ -96,6 +116,18 @@ removedeletecounter [USERNAME]
 - open to all users in chat while a lotto is open
 
 */
+
+
+const cleanText = (message, replacementWord = filter_word) => {
+  let cleanedMessage = message;
+  blacklistWords.forEach((word) => {
+      let regex = new RegExp(word.replace(/\s+/g, ''), 'gi');
+      cleanedMessage = cleanedMessage.replace(regex, replacementWord);
+      regex = new RegExp(word.replace(/\s/g, '\\s*'), 'gi');
+      cleanedMessage = cleanedMessage.replace(regex, replacementWord);
+  });
+  return cleanedMessage;
+};
 
 const handleAdminMessage = (message, sessionData) => {
   const [firstWord, secondWord] = message.trim().split(' ');

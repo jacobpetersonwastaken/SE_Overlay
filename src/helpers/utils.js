@@ -1,5 +1,6 @@
 const canvas = document.getElementById('game_board');
 const context = canvas?.getContext('2d');
+const ttsContainer = document.getElementById('tts_container');
 
 export const resizePage = () => {
   canvas.height = window.innerHeight;
@@ -181,6 +182,10 @@ export const speak = (text) => {
   try {
     const msg = new SpeechSynthesisUtterance();
     msg.text = text;
+    ttsContainer.style.display = 'block';
     window.speechSynthesis.speak(msg);
+    msg.onend = function(event) {
+      ttsContainer.style.display = 'none';
+  }
   } catch(e) {}
 };

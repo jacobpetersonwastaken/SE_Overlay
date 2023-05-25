@@ -39,6 +39,7 @@ export const initSessionData = () => {
     },
     tts: {
       eventIds: [],
+      eventTitles: [],
       queue: [],
       isEnabled: true,
     }
