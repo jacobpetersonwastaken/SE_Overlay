@@ -178,14 +178,49 @@ export const selfCorrectingTimer = (options) => {
   }
 };
 
-export const speak = (text) => {
-  try {
-    const msg = new SpeechSynthesisUtterance();
-    msg.text = text;
-    ttsContainer.style.display = 'block';
-    window.speechSynthesis.speak(msg);
-    msg.onend = function(event) {
-      ttsContainer.style.display = 'none';
+
+export const updateVoice = (sessionData, voiceName) => {
+  const voices = window.speechSynthesis.getVoices().filter(v => v.lang.startsWith('en'))
+  const voice = voices.find(
+    v => v.name.toLowerCase() === voiceName.toLowerCase()
+  );
+
+  if(voice) {
+    sessionData.tts.voice = voice;
   }
+};
+
+const startSpeaking = (sessionData) => {
+  try {
+    const handleEndEvent = () => {
+      sessionData.tts.voicebox.removeEventListener('end', handleEndEvent)
+      sessionData.tts.voicebox.removeEventListener('error', handleEndEvent)
+      if(sessionData.tts.queue.length) {
+        ttsContainer.style.display = 'block';
+        startSpeaking(sessionData);
+      } else {
+        sessionData.tts.voicebox = null;
+        ttsContainer.style.display = 'none';
+      }
+    }
+    sessionData.tts.voicebox.addEventListener('end', handleEndEvent)
+    sessionData.tts.voicebox.addEventListener('error', handleEndEvent)
+    const nextMessage = sessionData.tts.queue.shift();
+    sessionData.tts.voicebox.text = nextMessage;
+    if(sessionData.tts.voice) {
+      sessionData.tts.voicebox.voice = sessionData.tts.voice;
+      
+    }
+    window.speechSynthesis.speak(sessionData.tts.voicebox);
+
   } catch(e) {}
+};
+
+export const speak = (sessionData, text) => {
+  sessionData.tts.queue.push(text);
+
+  if(!sessionData.tts.voicebox) {
+    sessionData.tts.voicebox = new SpeechSynthesisUtterance();
+    startSpeaking(sessionData);
+  }
 };

@@ -10,6 +10,7 @@ import {
   flashCounter, 
   getDeleteCounterByNickname,
   speak,
+  updateVoice,
 } from '../helpers/utils.js';
 import {getUsers} from '../helpers/fetch.js';
 import {
@@ -78,10 +79,19 @@ export const handleMessageEvent = async (event, sessionData) => {
     sessionData.lottery.users.add(userId);
     lotteryCount.innerHTML = sessionData.lottery.users.size
   } 
-
   if(ADMIN_USERS.includes(userId)) {
     handleAdminMessage(text, sessionData);
   }
+
+  if(
+    ENABLED_FEATURES.tts &&
+    sessionData.tts.isEnabled && 
+    tags && 
+    tags['custom-reward-id'] && 
+    sessionData.tts.eventIds.includes(tags['custom-reward-id'])
+  ) {
+    speak(sessionData, text);
+  } 
 }
 
 /*
@@ -158,14 +168,24 @@ const handleAdminMessage = (message, sessionData) => {
       ENABLED_FEATURES.tts && setTtsEnabled(sessionData, true);
     case('!disableTts'):
       ENABLED_FEATURES.tts && setTtsEnabled(sessionData, false);
+    case('!updateVoice'):
+      ENABLED_FEATURES.tts && updateVoice(sessionData, secondWord);
+    case('!skiptts'):
+      ENABLED_FEATURES.tts && handleSkipTts();
     default:
       break;
   }
 };
 
+const handleSkipTts = () => {
+  if(speechSynthesis?.speaking) {
+    speechSynthesis.cancel();
+  }
+};
+
 const setTtsEnabled = (sessionData, enabled) => {
   sessionData.tts.isEnabled = enabled;
-}
+};
 
 const handleRunLottery = (sessionData, message) => {
   const [firstWord, secondWord] = message.trim().split(' ');
@@ -176,7 +196,7 @@ const handleRunLottery = (sessionData, message) => {
     60
   );
   runLottery(sessionData, seconds);
-}
+};
 
 const handleDeleteCounterLookup = (sessionData, message) => {
   const messageFragments = message.trim().split(' ');
@@ -186,7 +206,7 @@ const handleDeleteCounterLookup = (sessionData, message) => {
 
   const [command, nickname] = messageFragments;
   return getDeleteCounterByNickname(sessionData, nickname);
-}
+};
 
 const handleShowDeleteCounter = (sessionData, message) => {
   const counter = handleDeleteCounterLookup(sessionData, message);
@@ -201,7 +221,7 @@ const handleHideDeleteCounter = (sessionData, message) => {
 const handleFlashDeleteCounter = (sessionData, message) => {
   const counter = handleDeleteCounterLookup(sessionData, message);
   counter?.element && flashCounter(sessionData, counter.element);
-}
+};
 
 const handleMakeDeleteCounter = async (sessionData, message) => {
   const messageFragments = message.trim().split(' ');
@@ -222,7 +242,7 @@ const handleMakeDeleteCounter = async (sessionData, message) => {
   await saveUserDeletionCounters(sessionData);
 
   return;
-}
+};
 
 const handleRemoveDeleteCounter = (sessionData, message) => {
   const messageFragments = message.trim().split(' ');
@@ -231,4 +251,4 @@ const handleRemoveDeleteCounter = (sessionData, message) => {
   }
   removeUserDeletionCounter(sessionData, messageFragments[1]);
   return;
-}
+};
