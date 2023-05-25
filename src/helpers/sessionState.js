@@ -38,9 +38,12 @@ export const initSessionData = () => {
       context: null,
     },
     tts: {
+      // voicebox is the SpeechUtterance instance
+      voicebox: null,
       eventIds: [],
       queue: [],
       isEnabled: true,
+      voice: null,
     }
   };
   if(ENABLED_FEATURES.hype_train) {
